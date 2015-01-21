@@ -1,5 +1,6 @@
 {
   "ArrayExpression":         ["elements"],
+  "ArrowFunctionExpression": ["params", "body"],
   "AssignmentExpression":    ["operator", "left", "right"],
   "BinaryExpression":        ["operator", "left", "right"],
   "BlockStatement":          ["body"],
@@ -8,13 +9,17 @@
   "ExpressionStatement":     ["expression"],
   "File":                    ["program", "comments", "tokens"],
   "FunctionExpression":      ["id", "params", "body", "generator"],
+  "FunctionDeclaration":     ["id", "params", "body", "generator"],
   "Identifier":              ["name"],
   "IfStatement":             ["test", "consequent", "alternate"],
+  "ImportDeclaration":       ["specifiers", "source"],
+  "ImportSpecifier":         ["id", "name"],
   "Literal":                 ["value"],
+  "LogicalExpression":       ["operator", "left", "right"],
   "MemberExpression":        ["object", "property", "computed"],
+  "MethodDefinition":        ["key", "value", "computed", "kind"],
   "NewExpression":           ["callee", "arguments"],
   "ObjectExpression":        ["properties"],
-  "ParenthesizedExpression": ["expression"],
   "Program":                 ["body"],
   "Property":                ["kind", "key", "value", "computed"],
   "ReturnStatement":         ["argument"],
@@ -23,5 +28,6 @@
   "UnaryExpression":         ["operator", "argument", "prefix"],
   "VariableDeclaration":     ["kind", "declarations"],
   "VariableDeclarator":      ["id", "init"],
+  "WithStatement":           ["object", "body"],
   "YieldExpression":         ["argument", "delegate"]
 }

@@ -28,7 +28,7 @@ module.exports = function (commander, filenames) {
         map.setSourceContent(filename, result.actual);
 
         consumer.eachMapping(function (mapping) {
-          map._mappings.push({
+          map._mappings.add({
             generatedLine: mapping.generatedLine + offset,
             generatedColumn: mapping.generatedColumn,
             originalLine: mapping.originalLine,
@@ -63,7 +63,7 @@ module.exports = function (commander, filenames) {
 
       fs.writeFileSync(commander.outFile, result.code);
     } else {
-      console.log(result.code);
+      process.stdout.write(result.code + "\n");
     }
   };
 
@@ -113,16 +113,14 @@ module.exports = function (commander, filenames) {
     walk();
 
     if (commander.watch) {
-      var watcher = chokidar.watch(filenames, {
+      chokidar.watch(filenames, {
         persistent: true,
         ignoreInitial: true
-      });
-
-      _.each(["add", "change", "unlink"], function (type) {
-        watcher.on(type, function (filename) {
+      }).on("all", function (type, filename) {
+        if (type === "add" || type === "change" || type === "unlink" ) {
           console.log(type, filename);
           walk();
-        });
+        }
       });
     }
   };

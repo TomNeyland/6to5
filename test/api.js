@@ -8,10 +8,15 @@ suite("api", function () {
     assert.ok(!result.code);
   });
 
-  test("addDeclaration unknown", function () {
+  test("{ ast: false }", function () {
+    var result = transform("foo('bar');", { ast: false });
+    assert.ok(!result.ast);
+  });
+
+  test("addHelper unknown", function () {
     var file = new File;
     assert.throws(function () {
-      file.addDeclaration("foob");
+      file.addHelper("foob");
     }, /unknown declaration foob/);
   });
 });

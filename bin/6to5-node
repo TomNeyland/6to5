@@ -5,7 +5,6 @@
  * when found, before invoking the "real" _6to5-node(1) executable.
  */
 
-var spawn = require("child_process").spawn;
 var args  = ["--harmony", __dirname + "/_6to5-node"];
 
 process.argv.slice(2).forEach(function(arg){
@@ -14,18 +13,19 @@ process.argv.slice(2).forEach(function(arg){
   switch (flag) {
     case "-d":
       args.unshift("--debug");
-      args.push("--no-timeouts");
       break;
+
     case "debug":
     case "--debug":
     case "--debug-brk":
       args.unshift(arg);
-      args.push("--no-timeouts");
       break;
+
     case "-gc":
     case "--expose-gc":
       args.unshift("--expose-gc");
       break;
+
     case "--gc-global":
     case "--harmony":
     case "--harmony-proxies":
@@ -37,20 +37,32 @@ process.argv.slice(2).forEach(function(arg){
     case "--trace-deprecation":
       args.unshift(arg);
       break;
+
     default:
-      if (0 == arg.indexOf("--trace")) args.unshift(arg);
-      else args.push(arg);
+      if (arg.indexOf("--trace") === 0) {
+        args.unshift(arg);
+      } else {
+        args.push(arg);
+      }
       break;
   }
 });
 
-var proc = spawn(process.argv[0], args, { stdio: "inherit" });
-proc.on("exit", function (code, signal) {
-  process.on("exit", function (){
-    if (signal) {
-      process.kill(process.pid, signal);
-    } else {
-      process.exit(code);
-    }
+try {
+  var kexec = require("kexec");
+  kexec(process.argv[0], args);
+} catch (err) {
+  if (err.code !== "MODULE_NOT_FOUND") throw err;
+
+  var child_process = require("child_process");
+  var proc = child_process.spawn(process.argv[0], args, { stdio: "inherit" });
+  proc.on("exit", function (code, signal) {
+    process.on("exit", function () {
+      if (signal) {
+        process.kill(process.pid, signal);
+      } else {
+        process.exit(code);
+      }
+    })
   });
-});
+}

@@ -3,12 +3,12 @@
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/6to5/6to5">
-    <img alt="Travis Status" src="http://img.shields.io/travis/6to5/6to5.svg?branch=master&amp;style=flat&amp;label=travis">
+  <a href="https://gratipay.com/sebmck">
+    <img alt="Gratipay" src="https://img.shields.io/gratipay/sebmck.svg?style=flat">
   </a>
 
-  <a href="https://ci.appveyor.com/project/sebmck/6to5">
-    <img alt="Appveyor Status" src="http://img.shields.io/appveyor/ci/sebmck/6to5.svg?style=flat&amp;label=appveyor">
+  <a href="https://travis-ci.org/6to5/6to5">
+    <img alt="Travis Status" src="http://img.shields.io/travis/6to5/6to5/master.svg?style=flat&amp;label=travis">
   </a>
 
   <a href="https://codeclimate.com/github/6to5/6to5">
@@ -24,6 +24,11 @@
   </a>
 </p>
 
-**6to5** turns ES6+ code into vanilla ES5, so you can use next generation features **today.**
+<p align="center">
+  <strong>6to5</strong> turns ES6+ code into vanilla ES5, so you can use next generation features <strong>today.</strong>
+</p>
 
-For more information view the [documentation](https://6to5.github.io).
+<p align="center">
+  For more information view the <a href="https://6to5.github.io">documentation</a>. For
+  support visit the <a href="https://gitter.im/6to5/6to5">gitter room</a>.
+</p>

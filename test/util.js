@@ -18,6 +18,10 @@ suite("util", function () {
     assert.ok(util.canCompile("/test.es6"));
     assert.ok(util.canCompile("/scripts/test.es6"));
 
+    assert.ok(util.canCompile("test.es"));
+    assert.ok(util.canCompile("/test.es"));
+    assert.ok(util.canCompile("/scripts/test.es"));
+
     assert.ok(!util.canCompile("test"));
     assert.ok(!util.canCompile("test.css"));
     assert.ok(!util.canCompile("/test.css"));
@@ -58,10 +62,10 @@ suite("util", function () {
   });
 
   test("regexify", function () {
-    assert.deepEqual(util.regexify(undefined), /(?:)/);
-    assert.deepEqual(util.regexify(false), /(?:)/);
-    assert.deepEqual(util.regexify(null), /(?:)/);
-    assert.deepEqual(util.regexify(""), /(?:)/);
+    assert.deepEqual(util.regexify(undefined), /.^/);
+    assert.deepEqual(util.regexify(false), /.^/);
+    assert.deepEqual(util.regexify(null), /.^/);
+    assert.deepEqual(util.regexify(""), /.^/);
     assert.deepEqual(util.regexify(["foo", "bar"]), /foo|bar/);
     assert.deepEqual(util.regexify("foobar"), /foobar/);
     assert.deepEqual(util.regexify(/foobar/), /foobar/);
@@ -81,6 +85,8 @@ suite("util", function () {
     assert.equal(t.toIdentifier(t.identifier("swag")), "swag");
     assert.equal(t.toIdentifier("swag-lord"), "swagLord");
   });
+
+  test("isDynamic");
 
   test("isReferenced");
 
