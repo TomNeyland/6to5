@@ -1,6 +1,6 @@
-var transform = require("../lib/6to5/transformation/transform");
+var transform = require("../lib/6to5/transformation");
 var assert    = require("assert");
-var File      = require("../lib/6to5/file");
+var File      = require("../lib/6to5/transformation/file");
 
 suite("api", function () {
   test("{ code: false }", function () {
@@ -17,6 +17,6 @@ suite("api", function () {
     var file = new File;
     assert.throws(function () {
       file.addHelper("foob");
-    }, /unknown declaration foob/);
+    }, /Unknown helper foob/);
   });
 });

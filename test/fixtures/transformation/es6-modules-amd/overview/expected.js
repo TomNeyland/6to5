@@ -1,20 +1,7 @@
-define(["exports", "module", "foo", "foo-bar", "./directory/foo-bar"], function (exports, module, _foo, _fooBar, _directoryFooBar) {
+define(["exports", "foo", "foo-bar", "./directory/foo-bar"], function (exports, _foo, _fooBar, _directoryFooBar) {
   "use strict";
 
-  var _extends = function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        target[key] = source[key];
-      }
-    }
-
-    return target;
-  };
-
-  var _interopRequire = function (obj) {
-    return obj && (obj["default"] || obj);
-  };
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
   var foo = _interopRequire(_foo);
 
@@ -25,5 +12,7 @@ define(["exports", "module", "foo", "foo-bar", "./directory/foo-bar"], function 
   var test2 = exports.test2 = 5;
 
   exports["default"] = test;
-  module.exports = _extends(exports["default"], exports);
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });

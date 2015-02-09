@@ -1,19 +1,25 @@
-if (!process.env.ALL_6TO5_TESTS) return;
+require("./_helper").assertVendor("traceur");
 
 var fs = require("fs");
 var _  = require("lodash");
 
-var traceurLoc = __dirname + "/../vendor/traceur";
-if (!fs.existsSync(traceurLoc)) {
-  console.error("No vendor/traceur - run `make bootstrap`");
-  process.exit(1);
-}
-
 require("./_transformation-helper")({
   name: "traceur",
-  loc: traceurLoc + "/test/feature",
+  loc: __dirname + "/../vendor/traceur/test/feature",
 
   ignoreSuites: [
+    // weird environmental issue make these hard to test
+    "Modules",
+
+    // these are the responsibility of regenerator
+    "AsyncFunctions",
+    "Yield",
+
+    // these are the responsibility of core-js
+    "StringExtras",
+    "ArrayExtras",
+    "Collections",
+
     // these are all internal traceur tests or non-standard features
     "ObjectMixin",
     "Annotations",
@@ -28,34 +34,56 @@ require("./_transformation-helper")({
   ],
 
   ignoreTasks: [
-    // core.js doesn't support due to a perf hit and having to override a lot
-    // of native methods
+    // TODO: #426
+    "Classes/SuperUnary",
+    "Classes/SuperPostfix",
+
+    // TODO: investigate
+    "Classes/SuperSet",
+    "Classes/PrototypeDescriptor",
+    "Classes/ExtendStrange",
+    "Classes/ClassNameBinding",
+
+    // these are the responsibility of core-js
     "Symbol/GetOwnPropertySymbols",
+    "Spread/Type",
+    "Symbol/ObjectModel",
+    "Symbol/Object",
+    "Spread/NoIterator",
+    "Destructuring/Rest",
+    "Destructuring/Empty",
+
+    // traceur uses an old version of regexpu
+    "RegularExpression/Simple",
+
+    // class methods are still enumerable in traceur
+    "NumericLiteral/Simple",
+    "Classes/Method",
+
+    // Object.mixin didn't make it into ES6
+    "ObjectMixin",
 
     // traceur doesn't name methods and has an incorrect test asserting that
     // they have no names
     "PropertyMethodAssignment/PropertyMethodAssignment",
 
-    // 6to5 assumes that all code transformed is a module
+    // 6to5 assumes that all code transformed is a module so this isn't necessary
     "Strict",
     "Syntax/UseStrictEscapeSequence",
     "Syntax/UseStrictLineContinuation",
 
-    // experimental es7 - the spec hasn't been finalised yet
-    // these both fail because of filter between blocks
+    // experimental es7 - the spec hasn't been finalized yet
+    // these both fail because of filters between blocks
     "ArrayComprehension/Simple",
     "GeneratorComprehension/Simple",
 
-    // yield has been added as a keyword in ES6 so this test is actually incorrect
-    "Yield/YieldIdentifier"
+    // yield has been added as a keyword in ES6
+    "Yield/YieldIdentifier",
+    "Syntax/StrictKeywords"
   ]
 }, {
-  optional: ["typeofSymbol"],
-  experimental: true,
-  after: function () {
-    // StringExtras/StarsWith
-    delete Object.prototype[1];
-  }
+  optional: ["spec.typeofSymbol"],
+  experimental: true
 }, function (opts, task) {
   if (!_.contains(task.exec.loc, "module.js")) {
     opts.blacklist = ["useStrict"];

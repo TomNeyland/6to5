@@ -7,3 +7,6 @@ exports.bar = foo;
 exports["default"] = foo;
 exports["default"] = foo;
 exports.bar = bar;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});

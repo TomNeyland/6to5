@@ -1,9 +1,12 @@
-var path = require("path");
-var fs   = require("fs");
-var _    = require("lodash");
+var esvalid = require("esvalid");
+var util    = require("../lib/6to5/util");
+var path    = require("path");
+var fs      = require("fs");
+var _       = require("lodash");
 
-var humanise = function (val) {
-  return path.basename(val, path.extname(val)).replace(/-/g, " ");
+var humanize = function (val, noext) {
+  if (noext) val = path.basename(val, path.extname(val));
+  return val.replace(/-/g, " ");
 };
 
 var readFile = exports.readFile = function (filename) {
@@ -13,6 +16,24 @@ var readFile = exports.readFile = function (filename) {
     return file;
   } else {
     return "";
+  }
+};
+
+exports.esvalid = function (ast, code, loc) {
+  var errors = esvalid.errors(ast);
+  if (errors.length) {
+    var msg = [];
+    _.each(errors, function (err) {
+      msg.push(err.message + " - " + JSON.stringify(err.node));
+    });
+    throw new Error(loc + ": " + msg.join(". ") + "\n" + code);
+  }
+};
+
+exports.assertVendor = function (name) {
+  if (!fs.existsSync(__dirname + "/../vendor/" + name)) {
+    console.error("No vendor/" + name + " - run `make bootstrap`");
+    process.exit(1);
   }
 };
 
@@ -28,13 +49,13 @@ exports.get = function (entryName, entryLoc) {
     var suite = {
       options: {},
       tests: [],
-      title: humanise(suiteName),
+      title: humanize(suiteName),
       filename: entryLoc + "/" + suiteName
     };
     suites.push(suite);
 
-    var suiteOptsLoc = suite.filename + "/options.json";
-    if (fs.existsSync(suiteOptsLoc)) suite.options = require(suiteOptsLoc);
+    var suiteOptsLoc = util.resolve(suite.filename + "/options");
+    if (suiteOptsLoc) suite.options = require(suiteOptsLoc);
 
     if (fs.statSync(suite.filename).isFile()) {
       push(suiteName, suite.filename);
@@ -70,11 +91,11 @@ exports.get = function (entryName, entryLoc) {
         sourceMapName:    expectLocAlias
       }, _.cloneDeep(suite.options));
 
-      var taskOptsLoc = taskDir + "/options.json";
-      if (fs.existsSync(taskOptsLoc)) _.merge(taskOpts, require(taskOptsLoc));
+      var taskOptsLoc = util.resolve(taskDir + "/options");
+      if (taskOptsLoc) _.merge(taskOpts, require(taskOptsLoc));
 
       var test = {
-        title: humanise(taskName),
+        title: humanize(taskName, true),
         disabled: taskName[0] === ".",
         options: taskOpts,
         exec: {

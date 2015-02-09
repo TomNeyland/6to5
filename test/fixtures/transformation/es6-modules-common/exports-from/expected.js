@@ -1,27 +1,20 @@
 "use strict";
 
-var _interopRequireWildcard = function (obj) {
-  return obj && obj.constructor === Object ? obj : {
-    "default": obj
-  };
-};
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { "default": obj }; };
 
-var _defaults = function (obj, defaults) {
-  for (var key in defaults) {
-    if (obj[key] === undefined) {
-      obj[key] = defaults[key];
-    }
-  }
+var _defaults = function (obj, defaults) { for (var key in defaults) { if (obj[key] === undefined) { obj[key] = defaults[key]; } } return obj; };
 
-  return obj;
-};
+var _foo = require("foo");
 
-_defaults(exports, _interopRequireWildcard(require("foo")));
+_defaults(exports, _interopRequireWildcard(_foo));
 
-exports.foo = require("foo").foo;
-exports.foo = require("foo").foo;
-exports.bar = require("foo").bar;
-exports.bar = require("foo").foo;
-exports["default"] = require("foo").foo;
-exports["default"] = require("foo").foo;
-exports.bar = require("foo").bar;
+exports.foo = _foo.foo;
+exports.foo = _foo.foo;
+exports.bar = _foo.bar;
+exports.bar = _foo.foo;
+exports["default"] = _foo.foo;
+exports["default"] = _foo.foo;
+exports.bar = _foo.bar;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});

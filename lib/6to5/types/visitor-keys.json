@@ -48,6 +48,7 @@
   "PrivateDeclaration":        ["declarations"],
   "Program":                   ["body"],
   "Property":                  ["key", "value"],
+  "RestElement":               ["argument"],
   "ReturnStatement":           ["argument"],
   "SequenceExpression":        ["expressions"],
   "SpreadElement":             ["argument"],
@@ -101,14 +102,14 @@
   "UnionTypeAnnotation":         [],
   "VoidTypeAnnotation":          [],
 
-  "XJSAttribute":              ["name", "value"],
-  "XJSClosingElement":         ["name"],
-  "XJSElement":                ["openingElement", "closingElement", "children"],
-  "XJSEmptyExpression":        [],
-  "XJSExpressionContainer":    ["expression"],
-  "XJSIdentifier":             [],
-  "XJSMemberExpression":       ["object", "property"],
-  "XJSNamespacedName":         ["namespace", "name"],
-  "XJSOpeningElement":         ["name", "attributes"],
-  "XJSSpreadAttribute":        ["argument"]
+  "JSXAttribute":              ["name", "value"],
+  "JSXClosingElement":         ["name"],
+  "JSXElement":                ["openingElement", "closingElement", "children"],
+  "JSXEmptyExpression":        [],
+  "JSXExpressionContainer":    ["expression"],
+  "JSXIdentifier":             [],
+  "JSXMemberExpression":       ["object", "property"],
+  "JSXNamespacedName":         ["namespace", "name"],
+  "JSXOpeningElement":         ["name", "attributes"],
+  "JSXSpreadAttribute":        ["argument"]
 }

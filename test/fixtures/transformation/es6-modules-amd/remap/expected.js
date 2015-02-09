@@ -10,4 +10,7 @@ define(["exports"], function (exports) {
     test = 3;
     test++;
   })();
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });

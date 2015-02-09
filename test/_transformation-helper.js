@@ -1,7 +1,7 @@
 var genHelpers = require("./_generator-helpers");
-var transform  = require("../lib/6to5/transformation/transform");
+var transform  = require("../lib/6to5/transformation");
 var sourceMap  = require("source-map");
-var esvalid    = require("esvalid");
+var codeFrame  = require("../lib/6to5/helpers/code-frame");
 var Module     = require("module");
 var helper     = require("./_helper");
 var assert     = require("assert");
@@ -14,6 +14,14 @@ require("../lib/6to5/polyfill");
 
 global.assertNoOwnProperties = function (obj) {
   assert.equal(Object.getOwnPropertyNames(obj).length, 0);
+};
+
+global.assertHasOwnProperty = function () {
+
+};
+
+global.assertLacksOwnProperty = function () {
+
 };
 
 global.assertArrayEquals = assert.deepEqual;
@@ -29,6 +37,8 @@ chai.assert.throw = function (fn, msg) {
     msg = "Generator is already running";
   } else if (msg === "Sent value to newborn generator") {
     msg = /^attempt to send (.*?) to newborn generator$/;
+  } else if (msg === "super prototype must be an Object or null") {
+    msg = "Object prototype may only be an Object or null";
   }
 
   return chai.assert._throw(fn, msg);
@@ -49,22 +59,17 @@ var run = function (task, done) {
   var execCode = exec.code;
   var result;
 
-  var checkAst = function (result) {
-    if (opts.noCheckAst) return;
+  var noCheckAst = opts.noCheckAst;
+  delete opts.noCheckAst;
 
-    var errors = esvalid.errors(result.ast.program);
-    if (errors.length) {
-      var msg = [];
-      _.each(errors, function (err) {
-        msg.push(err.message + " - " + JSON.stringify(err.node));
-      });
-      throw new Error(msg.join(". "));
-    }
+  var checkAst = function (result, opts) {
+    if (noCheckAst) return;
+    helper.esvalid(result.ast.program, result.code, opts.loc);
   };
 
   if (execCode) {
     result = transform(execCode, getOpts(exec));
-    checkAst(result);
+    checkAst(result, exec);
     execCode = result.code;
 
     try {
@@ -82,7 +87,7 @@ var run = function (task, done) {
       fn.call(global, fakeRequire, chai.assert, done);
     } catch (err) {
       err.message = exec.loc + ": " + err.message;
-      err.message += util.codeFrame(execCode);
+      err.message += codeFrame(execCode);
       throw err;
     }
   }
@@ -91,7 +96,7 @@ var run = function (task, done) {
   var expectCode = expect.code;
   if (!execCode || actualCode) {
     result     = transform(actualCode, getOpts(actual));
-    checkAst(result);
+    checkAst(result, actual);
     actualCode = result.code;
 
     try {
@@ -110,10 +115,10 @@ var run = function (task, done) {
     var consumer = new sourceMap.SourceMapConsumer(result.map);
 
     _.each(task.sourceMappings, function (mapping, i) {
-      var expect = mapping.original;
+      var actual = mapping.original;
 
-      var actual = consumer.originalPositionFor(mapping.generated);
-      chai.expect({ line: actual.line, column: actual.column }).to.deep.equal(expect);
+      var expect = consumer.originalPositionFor(mapping.generated);
+      chai.expect({ line: expect.line, column: expect.column }).to.deep.equal(actual);
     });
   }
 };
@@ -121,23 +126,20 @@ var run = function (task, done) {
 module.exports = function (suiteOpts, taskOpts, dynamicOpts) {
   taskOpts = taskOpts || {};
 
-  require("../register")(taskOpts);
-
   _.each(helper.get(suiteOpts.name, suiteOpts.loc), function (testSuite) {
     if (_.contains(suiteOpts.ignoreSuites, testSuite.title)) return;
 
     suite(suiteOpts.name + "/" + testSuite.title, function () {
+      setup(function () {
+        require("../register")(taskOpts);
+      });
+
       _.each(testSuite.tests, function (task) {
         if (_.contains(suiteOpts.ignoreTasks, task.title) || _.contains(suiteOpts.ignoreTasks, testSuite.title + "/" + task.title)) return;
 
         var runTest = function (done) {
           var runTask = function () {
-            try {
-              run(task, done);
-            } catch (err) {
-              if (task.options.after) task.options.after();
-              throw err;
-            }
+            run(task, done);
           };
 
           _.extend(task.options, taskOpts);
